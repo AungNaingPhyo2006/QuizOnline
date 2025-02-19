@@ -5,16 +5,32 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.anp.quizonline.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding : ActivityMainBinding
+    private lateinit var quizModelList : MutableList<QuizModel>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+        quizModelList = mutableListOf()
+        getDataFromFirebase()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+    private fun setupRecyclerView(){
+
+    }
+    private fun getDataFromFirebase(){
+        quizModelList.add(QuizModel("1","Programming","All the basic Programming","10"))
+        quizModelList.add(QuizModel("2","Computer","All the basic computer","20"))
+        quizModelList.add(QuizModel("3","Geography","All the basic geography","15"))
+        setupRecyclerView()
     }
 }
