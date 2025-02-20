@@ -5,11 +5,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.anp.quizonline.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
     private lateinit var quizModelList : MutableList<QuizModel>
+    private lateinit var adapter: QuizListAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -25,7 +27,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun setupRecyclerView(){
-
+        adapter = QuizListAdapter(quizModelList)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
     }
     private fun getDataFromFirebase(){
         quizModelList.add(QuizModel("1","Programming","All the basic Programming","10"))
