@@ -1,14 +1,18 @@
 package com.anp.quizonline
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.anp.quizonline.databinding.ActivityQuizBinding
+import com.anp.quizonline.databinding.ScoreDialogBinding
 
 class QuizActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
@@ -18,6 +22,8 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var binding : ActivityQuizBinding
 
     var currentQuestionIndex = 0
+    var selectedAnswer = ""
+    var score = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -56,6 +62,11 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
         }.start()
     }
     private fun loadQuestions(){
+        selectedAnswer = ""
+        if(currentQuestionIndex == questionModelList.size){
+            finishQuiz()
+            return
+        }
         binding.apply {
             questionIndicatorTextview.text = "Questions ${currentQuestionIndex + 1}/ ${questionModelList.size}"
             questionProgressIndicator.progress = (currentQuestionIndex.toFloat() / questionModelList.size.toFloat() * 100).toInt()
@@ -76,11 +87,41 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
         }
         val clickedBtn = v as Button
         if(clickedBtn.id == R.id.next_btn){
+            if(selectedAnswer == questionModelList[currentQuestionIndex].correct){
+                score++
+                Log.i("Score=>", score.toString())
+            }
             currentQuestionIndex++
             loadQuestions()
         }else{
             //options buttons
+            selectedAnswer = clickedBtn.text.toString()
             clickedBtn.setBackgroundColor(getColor(R.color.orange))
         }
+    }
+
+    private fun finishQuiz(){
+        val totalQuestions = questionModelList.size
+        val percentage = ((score.toFloat() / totalQuestions.toFloat()) * 100 ).toInt()
+
+       val  dialogBinding = ScoreDialogBinding.inflate(layoutInflater)
+        dialogBinding.apply {
+            scoreProgressIndicator.progress = percentage
+            scoreProgressText.text = "$percentage %"
+            if(percentage > 60){
+                scoreTitle.text = "Congrat! You have passed!"
+                scoreTitle.setTextColor(Color.BLUE)
+            }else{
+                scoreTitle.text = "Oop! You have failed!"
+                scoreTitle.setTextColor(Color.RED)
+            }
+            scoreSubTitle.text = "$score out of $totalQuestions are correct."
+            finishBtn.setOnClickListener{
+                finish()
+            }
+        }
+       val dialog = AlertDialog.Builder(this).setView(dialogBinding.root).setCancelable(false).create()
+        dialog.show()
+
     }
 }
