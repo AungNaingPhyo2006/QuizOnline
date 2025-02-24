@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">QuizOnline</string>
+    <string name="timer_icon">Timer Icon</string>
 </resources>
